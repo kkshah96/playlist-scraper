@@ -1,21 +1,27 @@
 package main
 
 import (
-	//"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"strings"
 )
 
 func main() {
 	r := gin.Default()
 
+	var port string
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	r.Use(gin.Recovery())
 	r.GET("/results", handleGetResults)
 	r.GET("/health", handleGetHealth)
-	r.Run(":9202") // TODO - get port from config file
+	if os.Getenv("PORT") == "" {
+		port = "9202"
+	} else {
+		port = os.Getenv("PORT")
+	}
+	r.Run(":" + port) // TODO - get port from config file
 }
 
 type Result struct {
@@ -28,6 +34,9 @@ func handleGetHealth(c *gin.Context) {
 }
 
 func handleGetResults(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
+
 	q := c.Request.URL.Query()
 	list := q["list"][0]
 	queryString := "site%3Aspotify.com+inurl%3Aplaylist+" + strings.Replace(list, ",", "+", -1)
