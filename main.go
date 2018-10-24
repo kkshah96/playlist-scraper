@@ -17,7 +17,7 @@ func main() {
 	r.GET("/results", handleGetResults)
 	r.GET("/health", handleGetHealth)
 	if os.Getenv("PORT") == "" {
-		port = "9202"
+		port = "9207"
 	} else {
 		port = os.Getenv("PORT")
 	}
@@ -39,9 +39,17 @@ func handleGetResults(c *gin.Context) {
 
 	q := c.Request.URL.Query()
 	list := q["list"][0]
-	queryString := "site%3Aspotify.com+inurl%3Aplaylist+" + strings.Replace(list, ",", "+", -1)
-	fmt.Println(queryString)
+	terms := strings.Split(list, ",")
+	queryString := "site%3Aspotify.com+inurl%3Aplaylist+"
 
+	for i, term := range terms {
+		fmt.Println(term)
+		queryString += "\"" + strings.Replace(term, " ", "+", -1)  + "\""
+		if i != len(terms)-1{
+			queryString += "+"
+		}
+	}
+	
 	results := getPlaylistsFromGoogleScrape(queryString)
 	parsedResults := make([]Result, len(results))
 
