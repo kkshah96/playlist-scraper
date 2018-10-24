@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -34,7 +35,7 @@ var userAgents = []string{
 
 func randUserAgent() string {
 	rand.Seed(time.Now().Unix())
-	return userAgents[rand.Intn(len(userAgents))]
+	return userAgents[rand.Int(len(userAgents))]
 }
 
 func buildGoogleUrl(searchTerm string, countryCode string, languageCode string) string {
@@ -56,7 +57,10 @@ func googleRequest(searchURL string) (*http.Response, error) {
 
 	res, err := baseClient.Do(req)
 
+	log.Info("Created request with status: " + res.Status)
+
 	if err != nil {
+		log.Error("Error creating request: " + err.Error())
 		return nil, err
 	} else {
 		return res, nil
