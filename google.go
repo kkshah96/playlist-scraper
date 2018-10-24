@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type GoogleResult struct {
@@ -19,6 +21,20 @@ var googleDomains = map[string]string{
 	"uk":  "https://www.google.co.uk/search?q=",
 	"ru":  "https://www.google.ru/search?q=",
 	"fr":  "https://www.google.fr/search?q=",
+}
+
+var userAgents = []string{
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+	"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38",
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0",
+	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38",
+}
+
+func randUserAgent() string {
+	rand.Seed(time.Now().Unix())
+	return userAgents[rand.Intn(len(userAgents))]
 }
 
 func buildGoogleUrl(searchTerm string, countryCode string, languageCode string) string {
@@ -36,7 +52,7 @@ func googleRequest(searchURL string) (*http.Response, error) {
 	baseClient := &http.Client{}
 
 	req, _ := http.NewRequest("GET", searchURL, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+	req.Header.Set("User-Agent", randUserAgent())
 
 	res, err := baseClient.Do(req)
 
