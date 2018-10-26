@@ -35,7 +35,7 @@ var userAgents = []string{
 
 func randUserAgent() string {
 	rand.Seed(time.Now().Unix())
-	return userAgents[rand.Int(len(userAgents))]
+	return userAgents[rand.Intn(len(userAgents))]
 }
 
 func buildGoogleUrl(searchTerm string, countryCode string, languageCode string) string {
