@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -25,9 +26,10 @@ func main() {
 }
 
 type Result struct {
-	Title string         `json:"title"`
-	Url   string         `json:"url"`
-	Hits  map[string]int `json:"hits"`
+	Title     string         `json:"title"`
+	Url       string         `json:"url"`
+	Hits      map[string]int `json:"hits"`
+	TotalHits int            `json:"toatlHits"`
 }
 
 func handleGetHealth(c *gin.Context) {
@@ -39,7 +41,20 @@ func handleGetResults(c *gin.Context) {
 	c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
 
 	q := c.Request.URL.Query()
-	list := q["list"][0]
+	fmt.Println(q["list"][0])
+
+	listArr := q["list"]
+	doRank := len(q["rank"]) > 0 && q["rank"][0] == "true"
+
+	var list string
+
+	if len(listArr) > 0 {
+		list = listArr[0]
+	} else {
+		c.JSON(http.StatusBadRequest, "Must provide list of query parameters")
+		return
+	}
+
 	terms := strings.Split(list, ",")
 	queryString := "site%3Aspotify.com+inurl%3Aplaylist+"
 
@@ -68,16 +83,39 @@ func handleGetResults(c *gin.Context) {
 			parsedResults[i].Url = urlThing[0]
 		}
 
-		for _, element := range terms {
-			fmt.Println(element)
-			fmt.Println("-------")
-			fmt.Println(result.ResultDesc)
-			if strings.Contains(strings.ToUpper(result.ResultDesc), strings.ToUpper(element)) {
-				elementMap[element]++
-			}
-		}
+		if doRank == true {
 
-		parsedResults[i].Hits = elementMap
+			for _, element := range terms {
+				fmt.Println(element)
+				fmt.Println("-------")
+				fmt.Println(result.ResultDesc)
+
+				if strings.Contains(strings.ToUpper(result.ResultDesc), strings.ToUpper(element)) {
+					elementMap[element]++
+					parsedResults[i].TotalHits++
+				}
+
+			}
+
+			parsedResults[i].Hits = elementMap
+		}
+	}
+
+	if doRank == true {
+		// Sort first by number of keywords found, then
+		// by number of total hits
+		// https://stackoverflow.com/questions/36122668/golang-how-to-sort-struct-with-multiple-sort-parameters
+		sort.Slice(parsedResults, func(i, j int) bool {
+			if len(parsedResults[i].Hits) > len(parsedResults[j].Hits) {
+				return true
+			}
+
+			if len(parsedResults[i].Hits) < len(parsedResults[j].Hits) {
+				return false
+			}
+
+			return parsedResults[i].TotalHits > parsedResults[j].TotalHits
+		})
 	}
 
 	c.JSON(http.StatusOK, parsedResults)
