@@ -25,8 +25,9 @@ func main() {
 }
 
 type Result struct {
-	Title string `json:"title"`
-	Url   string `json:"url"`
+	Title string         `json:"title"`
+	Url   string         `json:"url"`
+	Hits  map[string]int `json:"hits"`
 }
 
 func handleGetHealth(c *gin.Context) {
@@ -44,16 +45,18 @@ func handleGetResults(c *gin.Context) {
 
 	for i, term := range terms {
 		fmt.Println(term)
-		queryString += "\"" + strings.Replace(term, " ", "+", -1)  + "\""
-		if i != len(terms)-1{
+		queryString += "\"" + strings.Replace(term, " ", "+", -1) + "\""
+		if i != len(terms)-1 {
 			queryString += "+"
 		}
 	}
-	
+
 	results := getPlaylistsFromGoogleScrape(queryString)
 	parsedResults := make([]Result, len(results))
 
 	for i, result := range results {
+		elementMap := make(map[string]int)
+
 		parsedResults[i].Title = result.ResultTitle
 		fmt.Println(result.ResultTitle)
 
@@ -64,6 +67,17 @@ func handleGetResults(c *gin.Context) {
 		} else {
 			parsedResults[i].Url = urlThing[0]
 		}
+
+		for _, element := range terms {
+			fmt.Println(element)
+			fmt.Println("-------")
+			fmt.Println(result.ResultDesc)
+			if strings.Contains(strings.ToUpper(result.ResultDesc), strings.ToUpper(element)) {
+				elementMap[element]++
+			}
+		}
+
+		parsedResults[i].Hits = elementMap
 	}
 
 	c.JSON(http.StatusOK, parsedResults)

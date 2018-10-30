@@ -51,16 +51,34 @@
 			"revisionTime": "2018-10-05T18:17:28Z"
 		},
 		{
+			"checksumSHA1": "0Hvy6LfJa1y54UxQ2zQtcMd6ZKU=",
+			"path": "github.com/konsorten/go-windows-terminal-sequences",
+			"revision": "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242",
+			"revisionTime": "2018-10-04T22:41:46Z"
+		},
+		{
 			"checksumSHA1": "LkbotKu3JQxXEZZ9P40yhnFOycY=",
 			"path": "github.com/mattn/go-isatty",
 			"revision": "3fb116b820352b7f0c281308a4d6250c22d94e27",
 			"revisionTime": "2018-08-30T10:17:45Z"
 		},
 		{
+			"checksumSHA1": "l5lR/j1O43khfbKtGwwOFlzfDuU=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "458213699411cdceb6fd839a3178be49c01fba54",
+			"revisionTime": "2018-10-10T20:06:18Z"
+		},
+		{
 			"checksumSHA1": "MS9BMWE3rhoGuPblIYSgoe16yG8=",
 			"path": "github.com/ugorji/go/codec",
 			"revision": "99ea80c8b19ad777f970258ca09c5c2d5826f0fd",
 			"revisionTime": "2018-09-27T12:51:28Z"
+		},
+		{
+			"checksumSHA1": "BGm8lKZmvJbf/YOJLeL1rw2WVjA=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "7c1a557ab941a71c619514f229f0b27ccb0c27cf",
+			"revisionTime": "2018-10-02T14:18:56Z"
 		},
 		{
 			"checksumSHA1": "UrM9Sbp5q0sBFxqb5iMhqiPpXII=",
@@ -77,6 +95,12 @@
 		{
 			"checksumSHA1": "PWQLrPh5tzplI/R8onRIGme8wGk=",
 			"path": "golang.org/x/sys/unix",
+			"revision": "4497e2df6f9e69048a54498c7affbbec3294ad47",
+			"revisionTime": "2018-10-05T07:04:52Z"
+		},
+		{
+			"checksumSHA1": "Y7nctMxT58lRM78VtElPerhcnEs=",
+			"path": "golang.org/x/sys/windows",
 			"revision": "4497e2df6f9e69048a54498c7affbbec3294ad47",
 			"revisionTime": "2018-10-05T07:04:52Z"
 		},

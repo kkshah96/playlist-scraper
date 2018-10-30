@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	log "github.com/sirupsen/logrus"
+	//"io/ioutil"
 	"math/rand"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -69,6 +71,16 @@ func googleRequest(searchURL string) (*http.Response, error) {
 
 func googleResultParser(response *http.Response) ([]GoogleResult, error) {
 	doc, err := goquery.NewDocumentFromResponse(response)
+
+	file, err := os.Create("result.txt")
+	if err != nil {
+		log.Fatal("Cannot create file", err)
+	}
+	defer file.Close()
+
+	str, _ := doc.Html()
+	fmt.Fprintf(file, str)
+
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +116,7 @@ func GoogleScrape(searchTerm string, countryCode string, languageCode string) ([
 	if err != nil {
 		return nil, err
 	}
+
 	scrapes, err := googleResultParser(res)
 	if err != nil {
 		return nil, err
