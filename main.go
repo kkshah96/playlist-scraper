@@ -13,11 +13,15 @@ func main() {
 	r := gin.Default()
 
 	var port string
-	// Recovery middleware recovers from any panics and writes a 500 if there was one.
+
+  // Recovery middleware recovers from any panics and writes a 500 if there was one.
 	r.Use(gin.Recovery())
 	r.GET("/results", handleGetResults)
 	r.GET("/health", handleGetHealth)
-	if os.Getenv("PORT") == "" {
+
+  // Heroku will set a PORT env variable, so we will default to using this if
+  // it exists
+  if os.Getenv("PORT") == "" {
 		port = "9207"
 	} else {
 		port = os.Getenv("PORT")
@@ -25,6 +29,7 @@ func main() {
 	r.Run(":" + port) // TODO - get port from config file
 }
 
+// Represents a single Spotify search result
 type Result struct {
 	Title     string         `json:"title"`
 	Url       string         `json:"url"`
@@ -32,10 +37,13 @@ type Result struct {
 	TotalHits int            `json:"toatlHits"`
 }
 
+// Health endpoint for testing purpsoes
 func handleGetHealth(c *gin.Context) {
-	c.JSON(http.StatusOK, "I'm alive")
+	c.JSON(http.StatusOK, "I'm alive!")
 }
 
+// Functionality for making a request to Google and processing the results into
+// Result struct format
 func handleGetResults(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers")
@@ -121,6 +129,7 @@ func handleGetResults(c *gin.Context) {
 	c.JSON(http.StatusOK, parsedResults)
 }
 
+// Helper function to call GoogleScrape to fetch GoogleResults
 func getPlaylistsFromGoogleScrape(url string) []GoogleResult {
 	res, _ := GoogleScrape(url, "com", "en")
 	return res
